@@ -50,11 +50,10 @@ describe('👦 👩 MEMBERS ENDPOINT', () => {
       .post('/auth/register/')
       .send(adminRequest)
       .end((err, response) => {
-        const { text } = response;
-        const { token } = response.body.data;
-        console.log(`🔑 ADMIN ID ${text.slice(47, 49)} CREATED`);
+        const { token, user } = response.body.data;
         adminToken = token;
-        adminId = text.slice(47, 49);
+        adminId = user.id;
+        console.log(`🔑 ADMIN ID ${adminId} CREATED`);
         if (err) { console.log('errors? =>', err); }
         done();
       });
@@ -73,11 +72,10 @@ describe('👦 👩 MEMBERS ENDPOINT', () => {
       .post('/auth/register/')
       .send(standardRequest)
       .end((err, response) => {
-        const { text } = response;
-        const { token } = response.body.data;
-        console.log(`🔑 STANDARD ID ${text.slice(47, 49)} CREATED`);
+        const { token, user } = response.body.data;
         standardToken = token;
-        standardId = text.slice(47, 49);
+        standardId = user.id;
+        console.log(`🔑 STANDARD ID ${standardId} CREATED`);
         if (err) { console.log('errors? =>', err); }
         done();
       });

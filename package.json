@@ -1,13 +1,17 @@
 {
   "name": "ong-server",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "nodejs express server",
+  "main": "./bin/www",
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "lint": "eslint ./",
     "lint:fix": "eslint ./ --fix",
-    "test": "mocha ./test/testimonies.test.js --timeout 5000"
+    "test": "mocha ./test/organizations.test.js --timeout 5000"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",

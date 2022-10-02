@@ -2,9 +2,11 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 const chai = require('chai');
+
 const chaiHttp = require('chai-http');
+
 const { expect } = require('chai');
-const axios = require('axios');
+
 const server = require('../app');
 
 chai.should();
@@ -13,33 +15,27 @@ chai.use(chaiHttp);
 describe('ORGANIZATIONS ENDPOINT', () => {
   let adminToken;
   let adminId;
-  before(async () => {
-    await axios.post('http://localhost:3000/auth/register', {
-      firstName: 'Super',
-      lastName: 'User',
-      email: 'superuser@mail.com',
-      password: 'SuperUser1000',
-      passwordConfirmation: 'SuperUser1000',
+  before('Admin register', (done) => {
+    const adminRequest = {
+      firstName: 'AdminUser',
+      lastName: 'lastName',
+      email: 'organizationsAdminUser@mail.com',
+      password: 'adminUser1',
+      passwordConfirmation: 'adminUser1',
+      image: 'http://adminUserImage.jpg',
       roleId: 1,
-    });
-    const info = await axios.post('http://localhost:3000/auth/login', {
-      email: 'superuser@mail.com',
-      password: 'SuperUser1000',
-    }).then((r) => r.data);
-    adminToken = info.data.token;
-    adminId = info.data.user.id;
-  });
-
-  after(async () => {
-    try {
-      await axios.delete(`http://localhost:3000/users/${adminId}`, {
-        headers: {
-          Authorization: `${adminToken}`,
-        },
+    };
+    chai.request(server)
+      .post('/auth/register/')
+      .send(adminRequest)
+      .end((err, response) => {
+        const { token, user } = response.body.data;
+        adminToken = token;
+        adminId = user.id;
+        console.log(`🔑 ADMIN ID ${adminId} CREATED`);
+        if (err) { console.log('errors? =>', err); }
+        done();
       });
-    } catch (err) {
-      console.log(err);
-    }
   });
 
   describe('GET public info', () => {
@@ -109,5 +105,16 @@ describe('ORGANIZATIONS ENDPOINT', () => {
           done();
         });
     });
+  });
+  after('Admin cleaning', (done) => {
+    chai.request(server)
+      .delete(`/users/${adminId}`)
+      .set('authorization', adminToken)
+      .end((err, response) => {
+        const { status } = response;
+        console.log('🧹 ADMIN USER DELETE STATUS =>', status);
+        if (err) { console.log('errors? =>', err); }
+        done();
+      });
   });
 });

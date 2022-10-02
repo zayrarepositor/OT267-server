@@ -7,7 +7,7 @@ const isCurrentUser = async (req, res, next) => {
   const newId = Number(id);
 
   if (userId !== newId && roleId !== 1) {
-    return error({ res, message: 'unauthorized user', status: 403 });
+    return error({ res, message: 'forbidden: unauthorized user', status: 403 });
   }
   return next();
 };

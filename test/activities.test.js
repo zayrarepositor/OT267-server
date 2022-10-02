@@ -1,25 +1,50 @@
 /* eslint-disable no-unused-expressions */
-/**
- * Test para los endpoints del CRUD de activities.
- * End points a testear
- * - GET /activities
- * - POST /activities
- * - PUT /activities/:id
- */
+/* eslint-disable no-console */
+
 const chai = require('chai');
+
 const chaiHttp = require('chai-http');
+
 const { expect } = require('chai');
+
 const app = require('../app');
-require('dotenv').config();
 
 // Para que chai use el chai-http
+chai.should();
 chai.use(chaiHttp);
 
 // Token para los tests.
-const adminToken = process.env.TEST_ADMIN_TOKEN;
+/* const adminToken = process.env.TEST_ADMIN_TOKEN; */
 
 // eslint-disable-next-line no-undef
-describe('Testing activities endpoints', () => {
+describe('ACTIVITIES ENDPOINT', () => {
+  let adminToken = '';
+  let adminId = 0;
+  let activityId = 0;
+
+  before('Admin register', (done) => {
+    const adminRequest = {
+      firstName: 'AdminUser',
+      lastName: 'lastName',
+      email: 'activitiesAdminUser@gmail.com',
+      password: 'adminUser1',
+      passwordConfirmation: 'adminUser1',
+      image: 'http://adminUserImage.jpg',
+      roleId: 1,
+    };
+    chai.request(app)
+      .post('/auth/register/')
+      .send(adminRequest)
+      .end((err, response) => {
+        const { token, user } = response.body.data;
+        adminToken = token;
+        adminId = user.id;
+        console.log(`🔑 ADMIN ID ${adminId} CREATED`);
+        if (err) { console.log('errors? =>', err); }
+        done();
+      });
+  });
+
   describe('#Get activities, GET /activities', () => {
     // Test auth
     it('Should return and error for not auth user or admin', (done) => {
@@ -80,6 +105,8 @@ describe('Testing activities endpoints', () => {
           expect(res.body.data).to.have.property('name');
           expect(res.body.data).to.have.property('content');
           expect(res.body.data).to.have.property('image');
+          activityId = res.body.data.id;
+
           done();
         });
     });
@@ -88,7 +115,7 @@ describe('Testing activities endpoints', () => {
   describe('#Update activities PUTT /activities/:id', () => {
     it('Should return an error for not auth user or admin', (done) => {
       chai.request(app)
-        .put('/activities/1')
+        .put(`/activities/${activityId}`)
         .end((error, res) => {
           expect(error).to.be.null;
           expect(res).to.have.status(401);
@@ -98,7 +125,7 @@ describe('Testing activities endpoints', () => {
 
     it('Should update an activity using id', (done) => {
       chai.request(app)
-        .put('/activities/7')
+        .put(`/activities/${activityId}`)
         .set({ Authorization: adminToken })
         .field('name', 'Nuevo nombre de la actividad')
         .field('content', 'Contenido actualizado de la actividad')
@@ -140,5 +167,29 @@ describe('Testing activities endpoints', () => {
           done();
         });
     });
+  });
+
+  after('Activity cleaning', (done) => {
+    chai.request(app)
+      .delete(`/activities/${activityId}`)
+      .set('authorization', adminToken)
+      .end((err, response) => {
+        const { status } = response;
+        console.log('🧹 ACTIVITY DELETE STATUS =>', status);
+        if (err) { console.log('errors? =>', err); }
+        done();
+      });
+  });
+
+  after('Admin cleaning', (done) => {
+    chai.request(app)
+      .delete(`/users/${adminId}`)
+      .set('authorization', adminToken)
+      .end((err, response) => {
+        const { status } = response;
+        console.log('🧹 ADMIN USER DELETE STATUS =>', status);
+        if (err) { console.log('errors? =>', err); }
+        done();
+      });
   });
 });

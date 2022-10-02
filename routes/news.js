@@ -14,6 +14,7 @@ const {
   getAllNews,
   getCommentsOfSingleNews,
 } = require('../controllers/news');
+
 /**
  * @swagger
  * tags:

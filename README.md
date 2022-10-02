@@ -50,4 +50,14 @@ It will be deployed soon!
 
 ![donation 2-approved](https://user-images.githubusercontent.com/95602965/192578142-e09f11fd-5b30-4103-bdb8-700b469eacfd.png)
 
+* Test User
+
+    "id": 46,
+    "firstName": "AdminUser",
+    "lastName": "lastName",
+    "email": "myAdminUser@gmail.com",
+    "password": "$2b$10$pXJOYoCjLNSqPURL8.qxLe/rQVIXItYPbsdoMmMe2FuMX7Z/PeOxK",
+    "image": "http://adminUserImage.jpg",
+    "roleId": 1,
+
 Good Life! ( ͡~ ͜ʖ ͡°)

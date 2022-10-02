@@ -3,7 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 const { validateRegistrationData, validateLoginData } = require('../validators/validateUser');
+
 const { register, getUser, login } = require('../controllers/auth');
+
 const { isAuth, uploadFile } = require('../middlewares');
 
 /**

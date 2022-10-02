@@ -1,14 +1,44 @@
+/* eslint-disable no-console */
+/* eslint-disable no-undef */
+
 const chai = require('chai');
+
 const chaiHttp = require('chai-http');
+
 const { expect } = require('chai');
-const { adminToken } = require('../config/config').test;
 
 const app = require('../app');
 
-let newsId;
-
 chai.use(chaiHttp);
+chai.use(chaiHttp);
+
 describe('NEWS TEST', () => {
+  let adminToken = '';
+  let adminId = 0;
+  let newsId = 0;
+
+  before('Admin register', (done) => {
+    const adminRequest = {
+      firstName: 'AdminUser',
+      lastName: 'lastName',
+      email: 'testimoniesAdminUser@gmail.com',
+      password: 'adminUser1',
+      passwordConfirmation: 'adminUser1',
+      image: 'http://adminUserImage.jpg',
+      roleId: 1,
+    };
+    chai.request(app)
+      .post('/auth/register/')
+      .send(adminRequest)
+      .end((err, response) => {
+        const { token, user } = response.body.data;
+        adminToken = token;
+        adminId = user.id;
+        console.log(`🔑 ADMIN ID ${adminId} CREATED`);
+        if (err) { console.log('errors? =>', err); }
+        done();
+      });
+  });
   describe('GET /news', () => {
     it('expected error for not sending token', (done) => {
       chai.request(app)
@@ -54,24 +84,24 @@ describe('NEWS TEST', () => {
         });
     });
 
-    it('expected not found error', (done) => {
+    it('expected not found error when param does not exist', (done) => {
       chai.request(app)
         .get('/news/999')
         .set({ Authorization: adminToken })
         .end((err, res) => {
-          expect(res).to.have.status(404);
-          expect(res.text).to.be.equal('news not found');
+          expect(res).to.have.status(403);
+          expect(res.forbidden).to.be.equal(true);
           done();
         });
     });
 
-    it('expected not found error', (done) => {
+    it('expected not found error when param is not a number', (done) => {
       chai.request(app)
         .get('/news/abc')
         .set({ Authorization: adminToken })
         .end((err, res) => {
-          expect(res).to.have.status(404);
-          expect(res.text).to.be.equal('news not found');
+          expect(res).to.have.status(403);
+          expect(res.forbidden).to.be.equal(true);
           done();
         });
     });
@@ -136,15 +166,15 @@ describe('NEWS TEST', () => {
       chai.request(app)
         .post('/news')
         .set({ Authorization: adminToken })
-        .field('name', 'Name 5')
-        .field('content', 'content 5')
+        .field('name', 'Test News Name')
+        .field('content', 'Test News Content')
         .field('categoryId', 2)
         .attach('image', './test/imgTest/news.PNG', 'news.PNG')
         .end((err, res) => {
           expect(res).to.have.status(201);
           expect(res.body).to.have.property('data');
           expect(res.body).to.have.property('message').to.equals('news created');
-          newsId = (res.body.data.id || 1);
+          newsId = res.body.data.id;
           done();
         });
     });
@@ -261,5 +291,16 @@ describe('NEWS TEST', () => {
           done();
         });
     });
+  });
+  after('Admin cleaning', (done) => {
+    chai.request(app)
+      .delete(`/users/${adminId}`)
+      .set('authorization', adminToken)
+      .end((err, response) => {
+        const { status } = response;
+        console.log('🧹 ADMIN USER DELETE STATUS =>', status);
+        if (err) { console.log('errors? =>', err); }
+        done();
+      });
   });
 });

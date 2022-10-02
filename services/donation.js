@@ -1,14 +1,16 @@
 const axios = require('axios');
 
-const config = require('../config/config');
+/* const config = require('../config/config'); */
+
 const { Donation } = require('../models/index');
 
 const findOneDonation = async (id) => {
   try {
-    const donation = await axios.get(`https://api.mercadopago.com/v1/payments/${id}`, {
+    const donation = await axios.get(`${process.env.MP_URL}v1/payments/${id}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${config.development.mpAccessToken}`,
+        /*         Authorization: `Bearer ${config.development.mpAccessToken}`, */
+        Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
       },
     }).then((r) => r.data);
     return donation;
@@ -18,7 +20,8 @@ const findOneDonation = async (id) => {
 };
 
 const createDonation = async (amount) => {
-  const url = `${config.development.mpUrl}checkout/preferences`;
+  /*   const url = `${config.development.mpUrl}checkout/preferences`; */
+  const url = `${process.env.MP_URL}checkout/preferences`;
 
   const body = {
     items: [
@@ -41,7 +44,8 @@ const createDonation = async (amount) => {
     payment_methods: {
       installments: 1,
     },
-    notification_url: `${config.development.ngrokServerUrl}/donations/notification`,
+    /*     notification_url: `${config.development.ngrokServerUrl}/donations/notification`, */
+    notification_url: `${process.env.NGROK_SERVER_URL}donations/notification`,
     statement_descriptor: 'Somos Más ONG',
     external_reference: 'smong267',
   };
@@ -49,7 +53,8 @@ const createDonation = async (amount) => {
   const donation = await axios.post(url, body, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${config.development.mpAccessToken}`,
+      /*         Authorization: `Bearer ${config.development.mpAccessToken}`, */
+      Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
     },
   });
 
@@ -65,7 +70,8 @@ const saveDonation = async (body) => Donation.create({
 });
 
 const createSubscription = async (amount) => {
-  const url = `${config.development.mpUrl}preapproval`;
+  const url = `${process.env.MP_URL}preapproval`;
+  /*   const url = `${config.development.mpUrl}preapproval`; */
 
   const body = {
     reason: 'Donación mensual',
@@ -82,7 +88,8 @@ const createSubscription = async (amount) => {
   const subscription = await axios.post(url, body, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${config.development.mpAccessToken}`,
+      /*         Authorization: `Bearer ${config.development.mpAccessToken}`, */
+      Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
     },
   });
 

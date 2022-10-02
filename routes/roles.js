@@ -9,6 +9,7 @@ const {
 } = require('../controllers/roles');
 
 router.get('/', isAuth, isAdmin, getRoles);
+
 router.get('/:id', isAuth, isAdmin, getRole);
 
 module.exports = router;

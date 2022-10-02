@@ -2,8 +2,11 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 const chai = require('chai');
+
 const chaiHttp = require('chai-http');
+
 const { expect } = require('chai');
+
 const server = require('../app');
 
 chai.should();
@@ -12,13 +15,14 @@ chai.use(chaiHttp);
 const user = {
   firstName: 'Usuario1',
   lastName: 'Demo1',
-  email: 'test1@icloud.com',
+  email: 'authStandardUser@gmail.com',
   password: 'Uuser1000',
   passwordConfirmation: 'Uuser1000',
-  roleId: 2,
+  roleId: 1,
 };
 
 describe('AUTH ENDPOINT', () => {
+  let adminId = 0;
   let userToken;
   describe('Register a user', () => {
     it('should return an error if password does not match', (done) => {
@@ -48,6 +52,7 @@ describe('AUTH ENDPOINT', () => {
           expect(body.data).to.be.a('object');
           expect(body.data.token).to.be.a('string');
           expect(response).to.have.status(201);
+          adminId = body.data.user.id;
           if (err) console.log('errors? =>', err);
           done();
         });
@@ -87,7 +92,7 @@ describe('AUTH ENDPOINT', () => {
       chai.request(server)
         .post('/auth/login')
         .send({
-          ...user,
+          email: user.email,
           password: 'user1000',
         })
         .end((err, response) => {
@@ -98,7 +103,7 @@ describe('AUTH ENDPOINT', () => {
           done();
         });
     });
-    it('should login and return the use and its token', (done) => {
+    it('should login and return the user and its token', (done) => {
       chai.request(server)
         .post('/auth/login')
         .send(user)
@@ -142,5 +147,16 @@ describe('AUTH ENDPOINT', () => {
           done();
         });
     });
+  });
+  after('Admin cleaning', (done) => {
+    chai.request(server)
+      .delete(`/users/${adminId}`)
+      .set('authorization', userToken)
+      .end((err, response) => {
+        const { status } = response;
+        console.log('🧹 ADMIN USER DELETE STATUS =>', status);
+        if (err) { console.log('errors? =>', err); }
+        done();
+      });
   });
 });

@@ -1,8 +1,10 @@
 const sgMail = require('@sendgrid/mail');
 
-const config = require('../config/config');
+/* const config = require('../config/config');
 
-sgMail.setApiKey(config.development.sgApiKey);
+sgMail.setApiKey(config.development.sgApiKey); */
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const { htmlTemplate } = require('../templates/welcomeMessage');
 

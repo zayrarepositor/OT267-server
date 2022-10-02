@@ -1,4 +1,5 @@
 const { sendMail, success, serverError } = require('../helpers');
+
 const {
   newContact,
   findAllContacts,
@@ -34,7 +35,9 @@ const getContacts = async (req, res) => {
   try {
     const data = await findAllContacts();
 
-    success({ res, message: 'list of all contacts', data, status: 200 });
+    success({
+      res, message: 'list of all contacts', data, status: 200,
+    });
   } catch (err) {
     serverError({ res, message: err.message });
   }

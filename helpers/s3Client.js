@@ -1,7 +1,12 @@
 const S3 = require('aws-sdk/clients/s3');
 
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+/* const config = require('../config/config');
+
+const accessKeyId = config.development.awsKey;
+const secretAccessKey = config.development.awsSecret; */
+
+const accessKeyId = process.env.AWS_KEY;
+const secretAccessKey = process.env.AWS_SECRET;
 
 const s3Client = new S3({
   accessKeyId,

@@ -1,7 +1,8 @@
 const fs = require('fs');
+
 const { s3Client } = require('./s3Client');
 
-const bucketNameDefault = process.env.AWS_BUCKET_NAME;
+const bucketNameDefault = process.env.AWS_BUCKET;
 
 /**
  * This function storage files in aws s3 services.

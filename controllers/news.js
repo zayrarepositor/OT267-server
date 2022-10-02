@@ -98,7 +98,7 @@ const getCommentsOfSingleNews = async (req, res) => {
     return serverError({ res, message: err.message });
   }
   return (data[0] !== undefined)
-    ? success({ res, message: `list of all comments from new ${id} `, data })
+    ? success({ res, message: `list of all comments from news ${id}`, data })
     : error({ res, message: 'comments not found' });
 };
 

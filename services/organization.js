@@ -1,4 +1,5 @@
 const { Organization } = require('../models/index');
+
 const { Slide } = require('../models/index');
 
 const findOneOrganization = async () => Organization.findOne({

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 /* const createError = require('http-errors'); */
 const express = require('express');
 
@@ -13,12 +15,11 @@ const cors = require('cors');
 
 const fileUpload = require('express-fileupload');
 
-require('dotenv').config();
 const swaggerUI = require('swagger-ui-express');
 
 const swaggerJsDoc = require('swagger-jsdoc');
 
-const config = require('./config/config');
+/* const config = require('./config/config'); */
 
 const swaggerSpec = {
   definition: {
@@ -29,7 +30,7 @@ const swaggerSpec = {
     },
     servers: [
       {
-        url: config.development.mainUrl,
+        url: process.env.URL,
       },
     ],
   },

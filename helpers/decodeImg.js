@@ -1,4 +1,5 @@
 const fs = require('fs');
+
 const path = require('path');
 
 const decodeImg = (req, res, next) => {
@@ -19,7 +20,6 @@ const decodeImg = (req, res, next) => {
 
     req.body.filePath = path.join(__dirname, '..', 'tmp', filePath);
   }
-
   next();
 };
 

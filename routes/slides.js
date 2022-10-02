@@ -17,9 +17,13 @@ const {
 } = require('../controllers/slides');
 
 router.get('/', isAuth, isAdmin, getSlides);
+
 router.get('/:id', isAuth, isAdmin, getSlide);
+
 router.post('/', [isAuth, isAdmin, validateCreateSlide, decodeImg, uploadFile], createSlide);
+
 router.put('/:id', isAuth, isAdmin, updateSlide);
+
 router.delete('/:id', isAuth, isAdmin, deleteSlide);
 
 module.exports = router;
