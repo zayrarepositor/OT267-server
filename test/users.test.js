@@ -5,7 +5,7 @@ const {
 const { expect } = require('chai');
 // const { User } = require('../models/index');
 
-const app = require('../app');
+const app = require('../index');
 
 let token;
 let userId;

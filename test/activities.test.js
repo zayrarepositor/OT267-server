@@ -7,7 +7,7 @@ const chaiHttp = require('chai-http');
 
 const { expect } = require('chai');
 
-const app = require('../app');
+const app = require('../index');
 
 // Para que chai use el chai-http
 chai.should();
